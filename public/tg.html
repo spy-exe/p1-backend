@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperatura de Transição Vítrea</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Reutilize o mesmo CSS de antes para a consistência */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Cálculo da Temperatura de Transição Vítrea (Tg)</h1>
+
+    <label for="material">Material:</label>
+    <input type="text" id="material" placeholder="Ex: Polietileno">
+
+    <label for="formula">Fórmula para cálculo (exemplo):</label>
+    <input type="text" id="formula" placeholder="Ex: Tg = 130 + 0.5 * fator">
+
+    <button onclick="calcularTg()">Calcular Tg</button>
+
+    <h2>Resultado</h2>
+    <p id="resultado"></p>
+
+    <script>
+        async function calcularTg() {
+            const material = document.getElementById("material").value;
+            const formula = document.getElementById("formula").value;
+
+            if (!material || !formula) {
+                alert("Por favor, preencha o material e a fórmula!");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://172.233.0.77:5000/tg", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ material, formula })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    document.getElementById("resultado").textContent = `Erro: ${data.error}`;
+                } else {
+                    document.getElementById("resultado").textContent = `Temperatura de Transição Vítrea (Tg): ${data.tg}°C - ${data.descricao}`;
+                }
+            } catch (error) {
+                document.getElementById("resultado").textContent = "Erro ao calcular Tg.";
+            }
+        }
+    </script>
+
+</body>
+</html>

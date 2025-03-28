@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reações de Apoio e Diagramas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="reacoes.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Reações de Apoio e Diagramas</h1>
+
+        <div class="input-group">
+            <label for="comprimento">Comprimento da viga (m):</label>
+            <input type="number" id="comprimento" placeholder="Ex: 10">
+        </div>
+
+        <div class="input-group">
+            <label for="forca">Força aplicada (N):</label>
+            <input type="number" id="forca" placeholder="Ex: 500">
+        </div>
+
+        <div class="input-group">
+            <label for="posicao">Posição da força (m):</label>
+            <input type="number" id="posicao" placeholder="Ex: 5">
+        </div>
+
+        <button onclick="calcular()">Calcular</button>
+
+        <h2>Diagramas</h2>
+        <canvas id="grafico"></canvas>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
