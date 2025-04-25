@@ -3,37 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reações de Apoio e Diagramas</title>
+    <title>Codecraft | Reações de Apoio e Diagramas</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="reacoes.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <meta name="theme-color" content="#6366f1">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧪</text></svg>">
+    <style>
+        /* Estilos básicos para garantir funcionamento */
+        .tipologia-group {
+            margin-bottom: 20px;
+        }
+        .tipologia-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .tipologia-option {
+            flex: 1;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tipologia-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .tipologia-option.active {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+        .tipologia-option img {
+            width: 60px;
+            height: 40px;
+            margin-bottom: 8px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .tipologia-option span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        /* Estilos para o esquema da viga */
+        .esquema-container {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        #esquema-viga {
+            width: 100%;
+            height: 150px;
+            display: block;
+        }
+        
+        /* Estilos para detalhes de esforço */
+        .detalhes-esforco {
+            background: rgba(99, 102, 241, 0.05);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #6366f1;
+            font-size: 14px;
+        }
+        .detalhes-esforco p {
+            margin: 8px 0;
+        }
+        .detalhes-esforco strong {
+            color: #6366f1;
+        }
+        
+        /* Adaptações para tema escuro */
+        @media (prefers-color-scheme: dark) {
+            .tipologia-option {
+                background: #1e293b;
+                border-color: #334155;
+            }
+            .tipologia-option span {
+                color: #f8fafc;
+            }
+            .tipologia-option img {
+                filter: invert(1);
+                opacity: 0.8;
+            }
+            .esquema-container {
+                background: #1e293b;
+                border-color: #334155;
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Fundo com gradiente animado -->
+    <div class="bg-gradient"></div>
 
     <div class="container">
-        <h1>Reações de Apoio e Diagramas</h1>
+        <div class="app-wrapper">
+            <div class="header">
+                <a href="index.html" class="back-button"><i class="bi bi-arrow-left"></i></a>
+                <h1>Reações de Apoio e Diagramas</h1>
+            </div>
 
-        <div class="input-group">
-            <label for="comprimento">Comprimento da viga (m):</label>
-            <input type="number" id="comprimento" placeholder="Ex: 10">
+            <div class="content-container">
+                <div class="form-container">
+                    <div class="input-group">
+                        <label for="comprimento">Comprimento da viga (m)</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-rulers input-icon"></i>
+                            <input type="number" id="comprimento" class="with-icon" placeholder="Ex: 10" min="0.1" step="0.1" value="2.35">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="forca">Força aplicada (N)</label>
+                        <div class="input-wrapper">
+                            <i class="bi bi-arrow-down-circle input-icon"></i>
+                            <input type="number" id="forca" class="with-icon" placeholder="Ex: 500" min="1" step="1" value="250">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="posicao">Posição da força (m)</label>
+                        <div class="input-wrapper tooltip">
+                            <i class="bi bi-pin-map input-icon"></i>
+                            <input type="number" id="posicao" class="with-icon" placeholder="Ex: 5" min="0.1" step="0.1" value="1.5">
+                            <span class="tooltip-text">Deve ser menor que o comprimento da viga</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group tipologia-group">
+                        <label>Tipologia da viga</label>
+                        <div class="tipologia-options">
+                            <div class="tipologia-option active" onclick="selecionarTipologia('simples')">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30'%3E%3Cline x1='10' y1='15' x2='90' y2='15' stroke='%23000' stroke-width='2'/%3E%3Cline x1='10' y1='20' x2='30' y2='20' stroke='%23000' stroke-width='2'/%3E%3Cline x1='90' y1='20' x2='70' y2='20' stroke='%23000' stroke-width='2'/%3E%3Cline x1='10' y1='15' x2='10' y2='20' stroke='%23000' stroke-width='2'/%3E%3Cline x1='90' y1='15' x2='90' y2='20' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E" alt="Viga Bi-Apoiada">
+                                <span>Bi-Apoiada</span>
+                            </div>
+                            <div class="tipologia-option" onclick="selecionarTipologia('balanco')">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 30'%3E%3Cline x1='10' y1='15' x2='90' y2='15' stroke='%23000' stroke-width='2'/%3E%3Crect x1='5' y1='5' width='10' height='20' stroke='%23000' fill='%23fff' stroke-width='2'/%3E%3C/svg%3E" alt="Viga em Balanço">
+                                <span>Balanço</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="calcular()">
+                        <i class="bi bi-calculator"></i> Calcular
+                    </button>
+                </div>
+
+                <div class="results-container" id="results-container" style="display: none;">
+                    <div class="results-header">
+                        <h2>Resultados</h2>
+                    </div>
+                    
+                    <!-- Esquema da viga -->
+                    <div class="esquema-container">
+                        <canvas id="esquema-viga" height="150"></canvas>
+                    </div>
+                    
+                    <div class="reacoes-resultado">
+                        <div class="reacao-card">
+                            <div class="reacao-icon"><i class="bi bi-arrow-up-circle"></i></div>
+                            <div class="reacao-valor">
+                                <span class="reacao-label">Reação no Apoio A (N)</span>
+                                <span class="reacao-number" id="reacao-a">-</span>
+                            </div>
+                        </div>
+                        
+                        <div class="reacao-card" id="reacao-b-container">
+                            <div class="reacao-icon"><i class="bi bi-arrow-up-circle"></i></div>
+                            <div class="reacao-valor">
+                                <span class="reacao-label">Reação no Apoio B (N)</span>
+                                <span class="reacao-number" id="reacao-b">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Detalhes de esforços -->
+                    <div class="detalhes-esforco" id="detalhes-esforco" style="display: none;"></div>
+                    
+                    <div class="tab-container">
+                        <div class="tab-header">
+                            <button class="tab-button active" onclick="changeTab('cortante')">
+                                <i class="bi bi-graph-up"></i> Força Cortante
+                            </button>
+                            <button class="tab-button" onclick="changeTab('momento')">
+                                <i class="bi bi-arrow-repeat"></i> Momento Fletor
+                            </button>
+                        </div>
+                        <div class="tab-content">
+                            <div id="cortante-tab" class="tab-pane active">
+                                <canvas id="grafico-cortante" height="300"></canvas>
+                            </div>
+                            <div id="momento-tab" class="tab-pane">
+                                <canvas id="grafico-momento" height="300"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Legenda de valores -->
+                    <div class="legenda-container" style="margin-top: 20px; display: flex; justify-content: center; gap: 20px;">
+                        <div class="legenda-item" style="display: flex; align-items: center;">
+                            <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #6366f1; margin-right: 6px;"></span>
+                            <span style="font-size: 13px; color: #475569;">Força cortante</span>
+                        </div>
+                        <div class="legenda-item" style="display: flex; align-items: center;">
+                            <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #ec4899; margin-right: 6px;"></span>
+                            <span style="font-size: 13px; color: #475569;">Momento fletor</span>
+                        </div>
+                        <div class="legenda-item" style="display: flex; align-items: center;">
+                            <span style="width: 12px; height: 12px; border-radius: 50%; background-color: #10b981; margin-right: 6px;"></span>
+                            <span style="font-size: 13px; color: #475569;">Pontos críticos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="input-group">
-            <label for="forca">Força aplicada (N):</label>
-            <input type="number" id="forca" placeholder="Ex: 500">
-        </div>
-
-        <div class="input-group">
-            <label for="posicao">Posição da força (m):</label>
-            <input type="number" id="posicao" placeholder="Ex: 5">
-        </div>
-
-        <button onclick="calcular()">Calcular</button>
-
-        <h2>Diagramas</h2>
-        <canvas id="grafico"></canvas>
     </div>
 
-    <script src="script.js"></script>
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Calculando resultados...</p>
+    </div>
 
+    <script src="reacoes.js"></script>
 </body>
 </html>
